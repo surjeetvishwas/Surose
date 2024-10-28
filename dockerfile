@@ -2,7 +2,7 @@
 FROM python:3.11
 
 # Set environment variables for non-interactive install
-ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED 1
 
 # Install required system packages for mysqlclient
 RUN apt-get update && \
@@ -22,8 +22,8 @@ RUN pip install asgiref==3.7.2 certifi==2023.11.17 charset-normalizer==3.3.2 Dja
 COPY . .
 
 # Expose port 8080 for Google Cloud Run
-EXPOSE 8080
+
 
 # Default command
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8080"]
+CMD Python manage.py runserver 0.0.0.0:8080
 
