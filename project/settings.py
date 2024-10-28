@@ -92,14 +92,7 @@ DATABASES = {
         'PASSWORD': '2^~+L`lr>h"H>Cge',
         'HOST': '35.193.91.103',
         'PORT': '3306',
-        'OPTIONS': {
-            'ssl': {
-                'ca': 'server-ca.pem',
-                'cert':'client-cert.pem',
-                'key': 'client-key.pem',
-                
-            }
-        }
+        
     }
 }
 
