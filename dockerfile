@@ -1,5 +1,5 @@
 # Use the official Python image
-FROM python:3.10
+FROM python:3.11
 
 # Set environment variables for non-interactive install
 ENV DEBIAN_FRONTEND=noninteractive
@@ -25,6 +25,5 @@ COPY . .
 EXPOSE 8080
 
 # Default command
-ENTRYPOINT ["python", "manage.py"]
-CMD ["runserver", "0.0.0.0:8080"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8080"]
 
