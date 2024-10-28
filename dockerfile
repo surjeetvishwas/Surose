@@ -21,7 +21,8 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --upgrade pip setuptools wheel
 
 # Install Python dependencies
-RUN pip install -r requirements.txt --verbose
+RUN pip install -r requirements.txt 
+RUN sudo apt-get install python3-dev default-libmysqlclient-dev build-essential
 
 # Copy the rest of your application code
 COPY . .
