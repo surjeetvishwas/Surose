@@ -1,0 +1,328 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+
+{% block content %}
+<!-- Breadcrumb Area -->
+<div class="tm-breadcrumb-area tm-padding-section bg-grey" data-bgimage="{% static 'assets/images/breadcrumb-bg.jpg' %}">
+    <div class="container">
+        <div class="tm-breadcrumb">
+            <h2>Product Details</h2>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li>{{ product.name }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!--// Breadcrumb Area -->
+
+
+<!-- Page Content -->
+<main class="page-content">
+
+    <!-- Product Details Wrapper -->
+    <div class="tm-product-details-area tm-section tm-padding-section bg-white">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-12">
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success mb-4">{{ message }}</div>
+                            {% else %}
+                                <div class="alert alert-danger mb-4">{{ message }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="col-lg-9 col-12">
+
+                    <!-- Product Details -->
+                    <div class="tm-prodetails">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-10 col-12">
+                                <div class="tm-prodetails-images">
+                                    <div class="tm-prodetails-largeimages">
+                                        <div class="tm-prodetails-largeimage">
+                                            <a data-fancybox="tm-prodetails-imagegallery"
+                                                href="{{ product.image.url }}"
+                                                data-caption="Product Zoom Image 1">
+                                                <img src="{{ product.image.url }}"
+                                                    alt="product image">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-12">
+                                <div class="tm-prodetails-content">
+                                    <h4 class="tm-prodetails-title">{{ product.name }}</h4>
+                                    <span class="tm-prodetails-price">&dollar;{{ product.price }}</span>
+                                    <div class="tm-ratingbox">
+                                        {% with rating_avg|floatformat:'0' as rating_avg %}   
+                                            {% for i in '12345'|make_list %}
+                                                {% if i <= rating_avg %}
+                                                <span class="is-active"><i class="ion-android-star-outline"></i></span>
+                                                {% else %}
+                                                <span><i class="ion-android-star-outline"></i></span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endwith %}
+                                    </div>
+                                    <div class="tm-prodetails-infos">
+                                        <div class="tm-prodetails-singleinfo">
+                                            <b>Product ID : </b>{{ product.id }}
+                                        </div>
+                                        <div class="tm-prodetails-singleinfo">
+                                            <b>Category : </b><a href="#">{{ product.category.name }}</a>
+                                        </div>
+                                        <div class="tm-prodetails-singleinfo">
+                                            <b>Available : </b>
+                                            <span class="color-theme">{{ product.get_stock_display }}</span>
+                                        </div>
+                                        <div class="tm-prodetails-singleinfo">
+                                            <b>Manufacturer : </b><a href="{% url 'core:account_message_detail' product.user.username %}">{{ product.user.username }}</a>
+                                        </div>
+                                    </div>
+                                    <p>{{ product.description|truncatechars:'120' }}</p>
+                                    {% if user.is_authenticated %}
+                                        {% if user.is_owner and product.stock == 'in_stock' %}  
+                                        <form class="tm-prodetails-quantitycart" method="post" action="{% url 'core:product_cart_add' product.id %}">
+                                            {% csrf_token %}
+                                            <h6>Quantity :</h6>
+                                            <div class="tm-quantitybox">
+                                                <input type="text" name="quantity" value="{% if product.stock %}1{% else %}0{% endif %}">
+                                            </div>
+                                            <button type="submit" class="tm-button tm-button-dark">Add To Cart</button>
+                                        </form>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if product.stock == 'in_stock' %}
+                                        <form class="tm-prodetails-quantitycart" method="post" action="{% url 'core:product_cart_add' product.id %}">
+                                            {% csrf_token %}
+                                            <h6>Quantity :</h6>
+                                            <div class="tm-quantitybox">
+                                                <input type="text" name="quantity" value="{% if product.stock %}1{% else %}0{% endif %}">
+                                            </div>
+                                            <button type="submit" class="tm-button tm-button-dark">Add To Cart</button>
+                                        </form>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--// Product Details -->
+
+                    <!-- Product Details Description & Review -->
+                    <div class="tm-prodetails-desreview tm-padding-section-sm-top">
+                        <ul class="nav tm-tabgroup2" id="prodetails" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="prodetails-area1-tab" data-toggle="tab"
+                                    href="#prodetails-area1" role="tab" aria-controls="prodetails-area1"
+                                    aria-selected="true">Description</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="prodetails-area2-tab" data-toggle="tab"
+                                    href="#prodetails-area2" role="tab" aria-controls="prodetails-area2"
+                                    aria-selected="false">Reviews ({{ reviews.count }})</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="prodetails-content">
+                            <div class="tab-pane fade show active" id="prodetails-area1" role="tabpanel"
+                                aria-labelledby="prodetails-area1-tab">
+                                <div class="tm-prodetails-description">
+                                    <h4>Product Description</h4>
+                                    <p>{{ product.description }}</p>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="prodetails-area2" role="tabpanel"
+                                aria-labelledby="prodetails-area2-tab">
+                                <div class="tm-prodetails-review">
+                                    <h5>{{ reviews.count }} Review For {{ product.name }}</h5>
+                                    {% if reviews %} 
+                                    <div class="tm-comment-wrapper mb-50">
+                                        {% for review in reviews %}
+                                        <!-- Comment Single -->
+                                        <div class="tm-comment">
+                                            <div class="tm-comment-thumb">
+                                                <img src="{% static 'assets/images/author-image-1.jpg' %}" alt="author image">
+                                            </div>
+                                            <div class="tm-comment-content w-100">
+                                                <h6 class="tm-comment-authorname"><a href="#">{{ review.user.get_username }}</a>
+                                                </h6>
+                                                <span class="tm-comment-date">{{ review.created_at|date:'l, F d, Y' }} at {{ review.created_at|date:'g:iA' }}.</span>
+                                                <div class="tm-ratingbox">
+                                                    {% for i in '12345'|make_list %}
+                                                        {% if i|add:'0' <= review.rating %}
+                                                        <span class="is-active"><i class="ion-android-star-outline"></i></span>
+                                                        {% else %}
+                                                        <span><i class="ion-android-star-outline"></i></span>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                                <p>{{ review.comment }}</p>
+                                            </div>
+                                        </div>
+                                        <!--// Comment Single -->
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    {% if user.is_authenticated and user.is_owner %}
+                                    <h5>Add a review</h5>
+                                    <form action="{% url 'core:product_review_create' product.id %}" method="post" class="tm-form">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="rating" id="rating-value" value="4">
+                                        <div class="tm-form-inner">
+                                            <div class="tm-form-field">
+                                                <div class="tm-ratingbox tm-ratingbox-input" id="rating-input">
+                                                    <span class="is-active"><i
+                                                            class="ion-android-star-outline"></i></span>
+                                                    <span class="is-active"><i
+                                                            class="ion-android-star-outline"></i></span>
+                                                    <span class="is-active"><i
+                                                            class="ion-android-star-outline"></i></span>
+                                                    <span class="is-active"><i
+                                                            class="ion-android-star-outline"></i></span>
+                                                    <span><i class="ion-android-star-outline"></i></span>
+                                                </div>
+                                            </div>
+                                            <div class="tm-form-field">
+                                                <textarea name="comment" cols="30" rows="5"
+                                                    placeholder="Your Review"></textarea>
+                                            </div>
+                                            <div class="tm-form-field">
+                                                <button type="submit" class="tm-button">Submit</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--// Product Details Description & Review -->
+                    {% if products.similar %}
+                    <div class="tm-similliar-products tm-padding-section-sm-top">
+                        <h4 class="small-title">Similar Products</h4>
+                        <div class="row tm-products-slider3">
+                            {% for product_item in products.similar %}
+                            <!-- Single Product -->
+                            <div class="col-12">
+                                <div class="tm-product tm-scrollanim">
+                                    <div class="tm-product-topside">
+                                        <div class="tm-product-images">
+                                            <img src="{{ product_item.image.url }}"
+                                                alt="product image">
+                                        </div>
+                                        <ul class="tm-product-actions">
+                                            <li><a href="#"><i class="ion-android-cart"></i> Add to cart</a>
+                                            </li>
+                                            <li><button data-fancybox data-src="#tm-product-quickview"><i
+                                                        class="ion-eye"></i></button></li>
+                                            <li><a href="#"><i class="ion-heart"></i></a></li>
+                                        </ul>
+                                        <div class="tm-product-badges">
+                                            <span class="tm-product-badges-sale">Sale</span>
+                                        </div>
+                                    </div>
+                                    <div class="tm-product-bottomside">
+                                        <h6 class="tm-product-title"><a href="{% url 'core:product_detail' product_item.slug %}">{{ product_item.name }}</a></h6>
+                                        <div class="tm-ratingbox">
+                                            {% with product_item.rating_avg|floatformat:'0' as rating %}   
+                                                {% for i in '12345'|make_list %}
+                                                    {% if i <= rating %}
+                                                    <span class="is-active"><i class="ion-android-star-outline"></i></span>
+                                                    {% else %}
+                                                    <span><i class="ion-android-star-outline"></i></span>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endwith %}
+                                        </div>
+                                        <span class="tm-product-price">&dollar;{{ product_item.price }}</span>
+                                        <div class="tm-product-content">
+                                            <p>{{ product_item.description|truncatechars:'120' }}</p>
+                                            <ul class="tm-product-actions">
+                                                <li><a href="#"><i class="ion-android-cart"></i> Add to cart</a>
+                                                </li>
+                                                <li><button data-fancybox data-src="#tm-product-quickview"><i
+                                                            class="ion-eye"></i></button></li>
+                                                <li><a href="#"><i class="ion-heart"></i></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--// Single Product -->
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Widgets -->
+                <div class="col-lg-3 col-12">
+                    <div class="widgets">
+
+                        <!-- Single Widget -->
+                        <div class="single-widget widget-categories">
+                            <h6 class="widget-title">Categories</h6>
+                            <ul>
+                                {% for category in categories %}
+                                <li><a href="{% url 'core:products' %}?category={{ category.slug }}">{{ category.name }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <!--// Single Widget -->
+
+                        {% if products.popular %}
+                        <!-- Single Widget -->
+                        <div class="single-widget widget-popularproduct">
+                            <h6 class="widget-title">Popular Product</h6>
+                            <ul>
+                                {% for product_item in products.popular %}   
+                                <li>
+                                    <a href="{% url 'core:product_detail' product_item.slug %}" class="widget-popularproduct-image">
+                                        <img src="{{ product_item.image.url }}"
+                                            alt="product thumbnail">
+                                    </a>
+                                    <div class="widget-popularproduct-content">
+                                        <h6><a href="{% url 'core:product_detail' product_item.slug %}">{{ product_item.name }}</a></h6>
+                                        <span>&dollar;{{ product_item.price }}</span>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <!--// Single Widget -->
+                        {% endif %}
+                    </div>
+                </div>
+                <!--// Widgets -->
+
+            </div>
+        </div>
+    </div>
+    <!--// Product Details Wrapper -->
+
+</main>
+<!--// Page Content -->
+{% endblock content %}
+
+{% block script %}
+<script>
+    $('#rating-input').mouseleave(function () {
+        var rating = $(this).find('.is-active').length;
+        $('#rating-value').val(rating);
+    });
+</script>
+{% endblock script %}
+    
+    

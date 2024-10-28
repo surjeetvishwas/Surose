@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+
+{% block content %}
+<!-- Breadcrumb Area -->
+<div class="tm-breadcrumb-area tm-padding-section bg-grey"
+    data-bgimage="{% static 'assets/images/breadcrumb-bg.jpg' %}">
+    <div class="container">
+        <div class="tm-breadcrumb">
+            <h2>Checkout</h2>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Shop</a></li>
+                <li>Checkout</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!--// Breadcrumb Area -->
+
+<!-- Page Content -->
+<main class="page-content">
+
+    <!-- Checkout Area -->
+    <div class="tm-section tm-checkout-area bg-white tm-padding-section">
+        <div class="container">
+            <div class="tm-form tm-checkout-form">
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                        <div class="alert alert-success mb-4">{{ message }}</div>
+                        {% else %}
+                        <div class="alert alert-danger mb-4">{{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                <div id="result-message">
+                    {% if order.is_paid %}
+                    <div class="alert alert-success mb-4">Transaction completed successfully</div>
+                    {% endif %}
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h4 class="small-title">SHIPPING INFORMATION</h4>
+
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <th style="width: 160px;">Name:</th>
+                                        <td>{{ order.first_name }} {{ order.last_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 160px;">Email:</th>
+                                        <td>{{ order.email }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 160px;">Phone:</th>
+                                        <td>{{ order.phone|default:'-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 160px;">Country:</th>
+                                        <td>{{ order.country }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 160px;">Address:</th>
+                                        <td>{{ order.address }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 160px;">State:</th>
+                                        <td>{{ order.state }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 160px;">Zip / Postcode:</th>
+                                        <td>{{ order.postcode }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="tm-checkout-orderinfo">
+                            <div class="table-responsive">
+                                <table class="table table-borderless tm-checkout-ordertable">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for cart in carts %}
+                                        <tr>
+                                            <td>{{ cart.product.name }} * {{ cart.quantity }}</td>
+                                            <td>&dollar;{{ cart.total|floatformat:'2' }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="tm-checkout-total">
+                                            <td>Total</td>
+                                            <td>&dollar;{{ total|floatformat:'2' }}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            {% if not order.is_paid and order.user == user %}
+                                <form method="post" action="{% url 'core:account_order_payment' %}" class="tm-checkout-payment">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="order-id" value="{{ order.id }}">
+                                    <button type="submit" class="tm-button btn-block">Pay Now</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--// Checkout Area -->
+
+</main>
+<!--// Page Content -->
+{% endblock content %}

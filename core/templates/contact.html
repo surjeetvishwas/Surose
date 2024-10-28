@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+
+{% block content %}
+<!-- Breadcrumb Area -->
+<div class="tm-breadcrumb-area tm-padding-section bg-grey" data-bgimage="{% static 'assets/images/breadcrumb-bg.jpg' %}">
+    <div class="container">
+        <div class="tm-breadcrumb">
+            <h2>Contact Us</h2>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li>About</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!--// Breadcrumb Area -->
+
+<!-- Page Content -->
+<main class="page-content">
+
+    <!-- Contact Area -->
+    <div class="tm-section tm-contact-area tm-padding-section bg-white">
+        <div class="container">
+            <div class="tm-contact-blocks">
+                <div class="row mt-30-reverse justify-content-center">
+
+                    <!-- Contact block -->
+                    <div class="col-lg-4 col-md-6  mt-30">
+                        <div class="tm-contact-block text-center">
+                            <i class="ion-android-call"></i>
+                            <h6>Call Us</h6>
+                            <p>Phone : <a href="tel:+18009156270">1 800 915 6270</a></p>
+                            <p>Tel : <a href="tel:+15147332010">1 514 733 2010</a></p>
+                        </div>
+                    </div>
+                    <!--// Contact block -->
+
+                    <!-- Contact block -->
+                    <div class="col-lg-4 col-md-6  mt-30">
+                        <div class="tm-contact-block text-center">
+                            <i class="ion-location"></i>
+                            <h6>Our Location</h6>
+                            <p>7415 Transcanadienne, Suite 100 St. Laurent, Quebec, Canada H45T 1Z22</p>
+                        </div>
+                    </div>
+                    <!--// Contact block -->
+
+                    <!-- Contact block -->
+                    <div class="col-lg-4 col-md-6  mt-30">
+                        <div class="tm-contact-block text-center">
+                            <i class="ion-email"></i>
+                            <h6>Email</h6>
+                            <p><a href="mailto:surose@gmail.com">surose@gmail.com</a></p>
+                            <p><a href="mailto:info@surose.com">info@surose.com</a></p>
+                        </div>
+                    </div>
+                    <!--// Contact block -->
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--// Contact Area -->
+
+</main>
+<!--// Page Content -->
+{% endblock content %}
+    

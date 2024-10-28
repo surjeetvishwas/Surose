@@ -1,0 +1,282 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Surose - Jewelry eCommerce HTML Template</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" href="{% static 'assets/images/favicon.png' %}">
+    <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico' %}">
+
+    <!-- CSS FILES HERE -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{% static 'assets/css/vendors/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/vendors/meanmenu.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/vendors/slick.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/vendors/slick-theme.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/vendors/ionicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/vendors/nice-select.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/vendors/jquery.fancybox.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/vendors/jquery.nstSlider.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <!-- endinject -->
+</head>
+
+<body>
+
+    <!-- Preloader -->
+    <div class="tm-preloader">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="tm-preloader-logo">
+                        <img src="{% static 'assets/images/logo.png' %}" alt="logo">
+                    </div>
+                    <span class="tm-preloader-progress"></span>
+                </div>
+            </div>
+        </div>
+        <button class="tm-button tm-button-small">Cancel Preloader</button>
+    </div>
+    <!--// Preloader -->
+
+    <!-- Wrapper -->
+    <div id="wrapper" class="wrapper">
+
+        <!-- Header -->
+        <div class="tm-header tm-header-sticky">
+
+            <!-- Header Top Area -->
+            <div class="tm-header-toparea bg-black">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8 col-12">
+                            <ul class="tm-header-info">
+                                <li><a href="tel:18883456789"><i class="ion-ios-telephone"></i>1-888-345-6789</a></li>
+                                <li><a href="mailto:contact@example.com"><i
+                                            class="ion-android-mail"></i>contact@example.com</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-4 col-12">
+                            <div class="tm-header-options">
+                                <div class="tm-dropdown tm-header-links">
+                                    <button>My Account</button>
+                                    {% if user.is_authenticated %}
+                                    <ul>
+                                        {% if user.is_superuser %}
+                                        <li><a href="{% url 'core:account_user_list' %}">Users</a></li>
+                                        {% endif %}
+                                        {% if user.is_superuser or user.is_manufacturer %}
+                                        <li><a href="{% url 'core:account_product_list' %}">Products</a></li>
+                                        {% endif %}
+                                        <li><a href="{% url 'core:account_profile' %}">My Account</a></li>
+                                        {% if user.role == 'owner' %}
+                                        <li><a href="{% url 'core:account_bulk_order_list' %}">Bulk Orders</a></li>
+                                        {% endif %}
+                                        <li><a href="{% url 'core:product_cart' %}">Shopping Cart</a></li>
+                                        <li><a href="{% url 'core:account_order_list' %}">Orders</a></li>
+                                        <li><a href="{% url 'core:auth_logout' %}">Logout</a></li>
+                                    </ul>
+                                    {% else %}
+                                    <ul>
+                                        <li><a href="{% url 'core:login_register' %}">Login/Register</a></li>
+                                    </ul>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--// Header Top Area -->
+
+            <!-- Header Middle Area -->
+            <div class="tm-header-middlearea bg-white">
+                <div class="container">
+                    <div class="tm-mobilenav"></div>
+                    <div class="row align-items-center">
+                        <div class="col-lg-3 col-6 order-1 order-lg-1">
+                            <a href="{% url 'core:home' %}" class="tm-header-logo">
+                                <img src="{% static 'assets/images/logo.png' %}" alt="surose">
+                            </a>
+                        </div>
+                        <div class="col-lg-6 col-12 order-3 order-lg-2">
+                            <form class="tm-header-search" action="{% url 'core:products' %}">
+                                <input type="hidden" name="category" value="{{ request.GET.category }}">
+                                <input type="text" name="search" placeholder="Search product..." value="{{ request.GET.search }}">
+                                <button><i class="ion-android-search"></i></button>
+                            </form>
+                        </div>
+                        {% if user.is_owner %}  
+                        <div class="col-lg-3 col-6 order-2 order-lg-3">
+                            <ul class="tm-header-icons">
+                                <li><a href="{% url 'core:product_cart' %}"><i class="ion-bag"></i><span>{{ global_carts.count }}</span></a></li>
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!--// Header Middle Area -->
+
+            <!-- Header Bottom Area -->
+            <div class="tm-header-bottomarea bg-white">
+                <div class="container">
+                    <nav class="tm-header-nav">
+                        <ul>
+                            <li><a href="{% url 'core:home' %}">Home</a></li>
+                            <li><a href="{% url 'core:products' %}">Shop</a></li>
+                            <li><a href="{% url 'core:about' %}">About</a></li>
+                            <li><a href="{% url 'core:contact' %}">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <!--// Header Bottom Area -->
+
+        </div>
+        <!--// Header -->
+
+        {% block content %}
+            
+        {% endblock content %}            
+
+        <!-- Footer -->
+        <div class="tm-footer">
+
+            <!-- Instagram Photos -->
+            <ul id="instafeed" class="tm-instaphotos"></ul>
+            <!--// Instagram Photos -->
+
+            <!-- Footer Top Area -->
+            <div class="tm-footer-toparea tm-padding-section">
+                <div class="container">
+                    <div class="widgets widgets-footer row">
+
+                        <!-- Single Widget -->
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="single-widget widget-info">
+                                <a class="widget-info-logo" href="index.html"><img src="{% static 'assets/images/logo.png' %}"
+                                        alt="logo"></a>
+                                <p>Lorem ipsum dolor sit amet, consect etur adipiscing elit.</p>
+                                <ul>
+                                    <li><b>Address :</b>2726 Avenue Papineau Montreal, QC, Canada</li>
+                                    <li><b>Phone :</b><a href="tel:+18009156270">1-800-915-6270</a></li>
+                                    <li><b>Email :</b><a href="mailto:info@example.com">info@example.com</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!--// Single Widget -->
+
+                        <!-- Single Widget -->
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="single-widget widget-quicklinks">
+                                <h6 class="widget-title">Useful Link</h6>
+                                <ul>
+                                    <li><a href="{% url 'core:about' %}">About Us</a></li>
+                                    <li><a href="{% url 'core:contact' %}">Contact Us</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!--// Single Widget -->
+
+                        <!-- Single Widget -->
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="single-widget widget-quicklinks">
+                                <h6 class="widget-title">My Account</h6>
+                                {% if user.is_authenticated %}
+                                <ul>
+                                    <li><a href="{% url 'core:account_profile' %}">My Account</a></li>
+                                    <li><a href="{% url 'core:product_cart' %}">Shopping Cart</a></li>
+                                    <li><a href="{% url 'core:account_order_list' %}">Orders</a></li>
+                                </ul>
+                                {% else %}
+                                <ul>
+                                    <li><a href="{% url 'core:login_register' %}">Login/Register</a></li>
+                                </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!--// Single Widget -->
+
+                        <!-- Single Widget -->
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="single-widget widget-newsletter">
+                                <h6 class="widget-title">Join Our Newsletter</h6>
+                                <p>Get Business news, tip and solutions to
+                                    your problems from our experts.</p>
+                                <form id="tm-mailchimp-form" class="widget-newsletter-form">
+                                    <input id="mc-email" type="text" placeholder="Enter email address">
+                                    <button id="mc-submit" type="submit" class="tm-button">Subscribe Now
+                                        <b></b></button>
+                                </form>
+                                <!-- Mailchimp Alerts -->
+                                <div class="tm-mailchimp-alerts">
+                                    <div class="tm-mailchimp-submitting"></div>
+                                    <div class="mailchimp-success"></div>
+                                    <div class="tm-mailchimp-error"></div>
+                                </div>
+                                <!--// Mailchimp Alerts -->
+                            </div>
+                        </div>
+                        <!--// Single Widget -->
+
+                    </div>
+                </div>
+            </div>
+            <!--// Footer Top Area -->
+
+            <!-- Footer Bottom Area -->
+            <div class="tm-footer-bottomarea">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-md-7">
+                            <p class="tm-footer-copyright">©
+                                {% now 'Y' %}. Designed by <a href="https://thememarch.com">ThemeMarch</a></p>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="tm-footer-payment">
+                                <img src="{% static 'assets/images/payment-methods.png' %}" alt="payment methods">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--// Footer Bottom Area -->
+
+        </div>
+        <!--// Footer -->
+
+        <button id="back-top-top"><i class="ion-arrow-up-c"></i></button>
+
+    </div>
+    <!--// Wrapper -->
+
+    <!-- JS FILES HERE -->
+    <!-- inject:js -->
+    <script src="{% static 'assets/js/vendors/modernizr-3.7.1.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/jquery.meanmenu.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/slick.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/jquery.nice-select.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/jquery.countdown.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/jquery.ajaxchimp.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/jquery.fancybox.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/imagesloaded.pkgd.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/isotope.pkgd.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/instafeed.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/jquery.nstslider.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendors/ScrollMagic.min.js' %}"></script>
+    <script src="{% static 'assets/js/main.js' %}"></script>
+    <!-- endinject -->
+    {% block script %}
+        
+    {% endblock script %}
+</body>
+
+</html>

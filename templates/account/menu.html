@@ -1,0 +1,36 @@
+<ul class="nav tm-tabgroup" id="account" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link {% if 'core:account_order_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'core:account_order_list' %}">Orders</a>
+    </li>
+    {% if user.is_owner %}
+    <li class="nav-item">
+        <a class="nav-link {% if 'core:account_bulk_order_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'core:account_bulk_order_list' %}">Bulk Order</a>
+    </li>
+    {% endif %}
+    {% if user.is_superuser %} 
+    <li class="nav-item">
+        <a class="nav-link {% if 'core:account_user_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'core:account_user_list' %}">Users</a>
+    </li>
+    {% endif %}
+    {% if user.is_superuser or user.is_manufacturer %} 
+    <li class="nav-item">
+        <a class="nav-link {% if 'core:account_product_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'core:account_product_list' %}">Products</a>
+    </li>
+    {% endif %}
+    {% if not user.is_superuser %}
+    <li class="nav-item">
+        <a class="nav-link {% if 'core:account_message_' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'core:account_message_list' %}">Messages</a>
+    </li>
+    {% endif %}
+    <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.view_name == 'core:account_profile' %}active{% endif %}" href="{% url 'core:account_profile' %}">Profile</a>
+    </li>
+    {% if user.is_manufacturer %}
+    <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.view_name == 'core:account_payout' %}active{% endif %}" href="{% url 'core:account_payout' %}">Payout</a>
+    </li>
+    {% endif %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'core:auth_logout' %}">Logout</a>
+    </li>
+</ul>

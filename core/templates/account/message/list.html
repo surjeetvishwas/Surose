@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+
+{% block content %}
+<!-- Breadcrumb Area -->
+<div class="tm-breadcrumb-area tm-padding-section bg-grey" data-bgimage="{% static 'assets/images/breadcrumb-bg.jpg' %}">
+    <div class="container">
+        <div class="tm-breadcrumb">
+            <h2>Profile</h2>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li>My Account</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!--// Breadcrumb Area -->
+
+<!-- Page Content -->
+<main class="page-content">
+
+    <!-- My Account Area -->
+    <div class="tm-section tm-my-account-area bg-white tm-padding-section">
+        <div class="container">
+            <div class="tm-myaccount">
+                {% include 'account/menu.html' %}
+                <div>
+                    <div class="tm-myaccount-acdetails">
+                        {% if messages %}
+                            {% for message in messages %}
+                                {% if message.tags == 'success' %}
+                                    <div class="alert alert-success mb-4">{{ message }}</div>
+                                {% else %}
+                                    <div class="alert alert-danger mb-4">{{ message }}</div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        <div class="list-group">
+                            {% for room in rooms %}
+                            <a href="{% url 'core:account_message_detail' room.user1.username %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                {{ room.user1.username }}
+                                {% if room.unread %}
+                                    <span class="badge badge-primary badge-pill">{{ room.unread }}</span>
+                                {% endif %}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--// My Account Area -->
+
+</main>
+<!--// Page Content -->
+{% endblock content %}
+    

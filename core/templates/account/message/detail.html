@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+
+{% block content %}
+<!-- Breadcrumb Area -->
+<div class="tm-breadcrumb-area tm-padding-section bg-grey" data-bgimage="{% static 'assets/images/breadcrumb-bg.jpg' %}">
+    <div class="container">
+        <div class="tm-breadcrumb">
+            <h2>Profile</h2>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li>My Account</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!--// Breadcrumb Area -->
+
+<!-- Page Content -->
+<main class="page-content">
+
+    <!-- My Account Area -->
+    <div class="tm-section tm-my-account-area bg-white tm-padding-section">
+        <div class="container">
+            <div class="tm-myaccount">
+                {% include 'account/menu.html' %}
+                <div>
+                    <div class="tm-myaccount-acdetails">
+                        {% if messages %}
+                            {% for message in messages %}
+                                {% if message.tags == 'success' %}
+                                    <div class="alert alert-success mb-4">{{ message }}</div>
+                                {% else %}
+                                    <div class="alert alert-danger mb-4">{{ message }}</div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        <ul class="list-group list-group-flush" style="overflow-y: auto; max-height: 600px;" id="chat-box">
+                            <li class="list-group-item sticky-top">
+                                <h5 class="mb-0">{{ user1.username }}</h5>
+                            </li>
+                            <li id="chat-wrapper">
+                                {% for chat in room.chatmessage_set.all %}
+                                <div class="list-group-item">
+                                    <div class="media">
+                                        <div class="media-body">
+                                            <h6 class="mt-0 mb-1">{{ chat.user.username }}</h6>
+                                            {% if chat.product %}
+                                            <div class="p-2 shadow-sm d-flex align-items-center mb-2 border">
+                                                    <img src="{{ chat.product.image.url }}" alt="{{ chat.product.name }}" class="mr-3" style="width: 32px; height: 32px; object-fit: cover;">
+                                                    <a href="{% url 'core:product_detail' chat.product.slug %}" class="text-dark" target="_blank">{{ chat.product.name }}</a>
+                                                </div>
+                                            {% endif %}
+                                            <p class="mb-0">{{ chat.message }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="list-group-item chat-item-empty">
+                                    <div class="text-center py-3">No message yet</div>
+                                </div>
+                                {% endfor %}
+                            </li>
+                            <li class="list-group-item" style="position: sticky; bottom: 0; left: 0;">
+                                <form class="tm-form tm-form-bordered" id="chat-form">
+                                    <div class="tm-form-inner">
+                                        <div class="tm-form-field d-flex">
+                                            <button type="button" class="btn btn-light mr-2 h6" data-toggle="modal" data-target="#product">
+                                                <i class="ion-plus-circled"></i>
+                                            </button>
+                                            <input type="text" name="message" placeholder="Type..." required>
+                                            <button type="submit" class="tm-button ml-2">Send</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--// My Account Area -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="product" tabindex="-1" aria-labelledby="productLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productLabel">Products</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="list-group">
+                    {% for product in products %}
+                    <button type="button" class="list-group-item list-group-item-action d-flex align-items-center" data-product='{
+                        "id": "{{ product.id }}",
+                        "slug": "{{ product.slug }}",
+                        "image": "{{ product.image.url }}",
+                        "name": "{{ product.name }}"
+                    }'>
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="mr-3" style="width: 32px; height: 32px; object-fit: cover;">
+                        <span>{{ product.name }}</span>
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+</main>
+<!--// Page Content -->
+{% endblock content %}
+
+
+
+{% block script %}
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+<script>
+    const roomId = "{{ room.id }}"
+    const room = "room_{{ room.id }}"
+    const user = "{{ user.username }}"
+    const csrftoken = getCookie('csrftoken');
+    const socket = io('http://localhost:5000', {
+        query: {
+            room,
+        }
+    })
+
+    fetch('{% url "api:chat_message_read" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify({
+            room: roomId,
+        })
+    })
+    
+    $('#chat-box').scrollTop($('#chat-box').prop('scrollHeight'));
+    $('#chat-form').on('submit', function(e) {
+        e.preventDefault();
+        const message = $(this).find('input[name="message"]').val();
+        let data;
+        if($('[data-product-item]').length) {
+            data = JSON.parse($('[data-product-item]').attr('data-product-item'))
+        }
+        $('.chat-item-empty').remove()
+        $('#chat-wrapper').append(`
+            <div class="list-group-item">
+                <div class="media">
+                    <div class="media-body">
+                        <h6 class="mt-0 mb-1">${user}</h6>
+                        ${data ? (`<div class="p-2 shadow-sm d-flex align-items-center mb-2 border">
+                            <img src="${data.image}" alt="${data.name}" class="mr-3" style="width: 32px; height: 32px; object-fit: cover;">
+                            <a href="/product/${data.slug}" class="text-dark" target="_blank">${data.name}</a>
+                        </div>`) : ''}
+                        <p class="mb-0">${message}</p>
+                    </div>
+                </div>
+            </div>
+        `)
+        $('.product-form-item').remove()
+        $(this).get(0).reset()
+        $('#chat-box').scrollTop($('#chat-box').prop('scrollHeight'));
+        fetch('{% url "api:chat_message_create" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({
+                room: roomId,
+                message,
+                product_id: data ? data.id : undefined
+            })
+        })
+        .then(function(resp) {
+            return resp.json()
+        })
+        .then(function(result) {
+            if(result.status == 'success') {
+                socket.emit('chat:create', {
+                    room,
+                    user,
+                    message,
+                    id: result.chat.id,
+                    product: data
+                });
+            }
+        })
+    })
+
+    socket.on('chat:create', function(data) {
+        $('.chat-item-empty').remove()
+        $('#chat-wrapper').append(`<div class="list-group-item">
+            <div class="media">
+                <div class="media-body">
+                    <h6 class="mt-0 mb-1">${data.user}</h6>
+                    ${data.product ? (`<div class="p-2 shadow-sm d-flex align-items-center mb-2 border">
+                        <img src="${data.product.image}" alt="${data.product.name}" class="mr-3" style="width: 32px; height: 32px; object-fit: cover;">
+                        <a href="/product/${data.product.slug}" class="text-dark" target="_blank">${data.product.name}</a>
+                    </div>`) : ''}
+                    <p class="mb-0">${data.message}</p>
+                </div>
+            </div>
+        </div>`)
+        $('#chat-box').scrollTop($('#chat-box').prop('scrollHeight'));
+        fetch('{% url "api:chat_message_read" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({
+                room: roomId,
+                chat_id: data.id
+            })
+        })
+    })
+
+    $('[data-product]').click(function(e) {
+        e.preventDefault()
+        $('.product-form-item').remove()
+        const data = JSON.parse($(this).attr('data-product'))
+        $('#chat-form').prepend(`<div class="p-2 shadow-sm d-flex align-items-center mb-3 border product-form-item" data-product-item='{
+                "id": "${data.id}",
+                "slug": "${data.slug}",
+                "image": "${data.image}",
+                "name": "${data.name}"
+            }'>
+            <input type="hidden" name="product-id" value="${data.id}">
+            <img src="${data.image}" alt="${data.name}" class="mr-3" style="width: 32px; height: 32px; object-fit: cover;">
+            <a href="/product/${data.slug}" class="text-dark" target="_blank">${data.name}</a>
+        </div>`)
+        $('#product').modal('hide')
+    })
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock script %}

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+
+{% block content %}
+<!-- Breadcrumb Area -->
+<div class="tm-breadcrumb-area tm-padding-section bg-grey" data-bgimage="{% static 'assets/images/breadcrumb-bg.jpg' %}">
+    <div class="container">
+        <div class="tm-breadcrumb">
+            <h2>Users</h2>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li>My Account</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!--// Breadcrumb Area -->
+
+<!-- Page Content -->
+<main class="page-content">
+
+    <!-- My Account Area -->
+    <div class="tm-section tm-my-account-area bg-white tm-padding-section">
+        <div class="container">
+            <div class="tm-myaccount">
+                {% include 'account/menu.html' %}
+                <div>
+                    <div class="tm-myaccount-orders">
+                        {% if messages %}
+                            {% for message in messages %}
+                                {% if message.tags == 'success' %}
+                                    <div class="alert alert-success mb-4">{{ message }}</div>
+                                {% else %}
+                                    <div class="alert alert-danger mb-4">{{ message }}</div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="tm-myaccount-orders-col-id">ID</th>
+                                        <th class="tm-myaccount-orders-col-date">NAME</th>
+                                        <th class="tm-myaccount-orders-col-status">EMAIL</th>
+                                        <th class="tm-myaccount-orders-col-total">ROLE</th>
+                                        <th class="tm-myaccount-orders-col-total">REQUEST</th>
+                                        <th class="tm-myaccount-orders-col-total">ADMIN</th>
+                                        <th class="tm-myaccount-orders-col-total"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user_item in users %}
+                                    <tr>
+                                        <td>#{{ forloop.counter }}</td>
+                                        <td>{{ user_item.get_username }}</td>
+                                        <td>{{ user_item.email }}</td>
+                                        <td>
+                                            {% if user_item.role == 'owner' %}
+                                                <span class="badge badge-primary">{{ user_item.get_role_display }}</span>
+                                            {% else %}
+                                                <span class="badge badge-warning">{{ user_item.get_role_display }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if not user_item.is_active %}
+                                                <a href="{% url 'core:account_user_role_edit' user_item.id 'accept' %}" onclick="return confirm('Are you sure to accept this request?')"><i class="ion-checkmark font-weight-bold text-success"></i></a>
+                                                <a href="{% url 'core:account_user_role_edit' user_item.id 'reject' %}" onclick="return confirm('Are you sure to reject this request?')"><i class="ion-close font-weight-bold text-danger ml-3"></i></a>
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if user_item.is_superuser %}
+                                            <i class="ion-checkmark font-weight-bold text-success"></i>
+                                            {% else %}
+                                            <i class="ion-close font-weight-bold text-danger"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'core:account_user_edit' user_item.id %}" class="btn btn-sm btn-warning">Edit</a>
+                                            <a href="{% url 'core:account_user_delete' user_item.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete {{ user_item.get_username }}?')">Delete</a>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">No users</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--// My Account Area -->
+
+</main>
+<!--// Page Content -->
+{% endblock content %}
+    

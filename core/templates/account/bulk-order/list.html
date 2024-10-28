@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+
+{% block content %}
+<!-- Breadcrumb Area -->
+<div class="tm-breadcrumb-area tm-padding-section bg-grey" data-bgimage="{% static 'assets/images/breadcrumb-bg.jpg' %}">
+    <div class="container">
+        <div class="tm-breadcrumb">
+            <h2>Orders</h2>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li>My Account</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!--// Breadcrumb Area -->
+
+<!-- Page Content -->
+<main class="page-content">
+
+    <!-- My Account Area -->
+    <div class="tm-section tm-my-account-area bg-white tm-padding-section">
+        <div class="container">
+            <div class="tm-myaccount">
+                {% include 'account/menu.html' %}
+                <div>
+                    <div class="tm-myaccount-orders">
+                        <div class="alert alert-info"><strong>Note: </strong>You can't mix product from different manufacturer, please check your cart first before add bulk order to cart.</div>
+                        {% if messages %}
+                            {% for message in messages %}
+                                {% if message.tags == 'success' %}
+                                    <div class="alert alert-success mb-4">{{ message }}</div>
+                                {% else %}
+                                    <div class="alert alert-danger mb-4">{{ message }}</div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        <form method="post" id="manufacturer-form">
+                            {% csrf_token %}
+                            <div class="tm-form-inner">
+                                <div class="tm-form-field">
+                                    <label for="manufacturers">Manufacturer</label>
+                                    <select name="manufacturer" id="manufacturers">
+                                        <option value="" selected>Select manufacturer</option>
+                                        {% for man in manufacturers %}
+                                            <option value="{{ man.username }}" {% if man == manufacturer %}selected{% endif %}>{{ man.username }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                        {% if manufacturer %}
+                            <form method="post" class="mt-4">
+                                {% csrf_token %}
+                                <div class="table-responsive mb-4">
+                                    <table class="table table-bordered mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="tm-cart-col-image" scope="col">Image</th>
+                                                <th class="tm-cart-col-productname" scope="col">Product</th>
+                                                <th class="tm-cart-col-price" scope="col">Price</th>
+                                                <th class="tm-cart-col-quantity" scope="col">Quantity</th>
+                                                <th class="tm-cart-col-total" scope="col">Add to cart</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for product in products %}
+                                            <tr>
+                                                <td>
+                                                    <a href="{% url 'core:product_detail' product.slug %}" class="tm-cart-productimage">
+                                                        <img src="{{ product.image.url }}"
+                                                            alt="{{ product.name }} image"
+                                                            style="width: 64px; height: 64px; object-fit: contain;">
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'core:product_detail' product.slug %}" class="tm-cart-productname">{{ product.name }}</a>
+                                                </td>
+                                                <td class="tm-cart-price">&dollar;{{ product.price }}</td>
+                                                <td>
+                                                    <div class="tm-quantitybox">
+                                                        <input type="text" value="1" name="qty-{{ product.id }}" data-bulk-qty="{{ product.price }}">
+                                                    </div>
+                                                </td>
+                                                <td class="tm-form">
+                                                    <input type="checkbox" id="add-to-cart-{{ product.id }}" name="add-to-cart" value="{{ product.id }}" data-bulk-cart="{{ product.price }}">
+                                                    <label for="add-to-cart-{{ product.id }}"></label>
+                                                </td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="5">No product</td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% if products %}
+                                            <tr>
+                                                <th colspan="4" class="text-left">Total</th>
+                                                <th class="h5" id="bulk-total">&dollar;0</th>
+                                            </tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="text-right">
+                                    <button type="submit" name="add-bulk-cart" class="tm-button">Add Products to Cart</button>
+                                </div>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--// My Account Area -->
+
+</main>
+<!--// Page Content -->
+{% endblock content %}
+
+
+
+{% block script %}
+<script>
+    $('#manufacturers').change(function() {
+        $('#manufacturer-form').submit();
+    });
+
+    let total = 0;
+    $('[data-bulk-qty]').on('change input', getTotal)
+    $('[data-bulk-cart]').on('change', getTotal)
+
+    function getTotal() {
+        total = 0;
+        $('[data-bulk-cart]').each(function(i, v) {
+            if(!$(v).prop('checked')) return;
+            const price = Number($(v).attr('data-bulk-qty') ? $(v).attr('data-bulk-qty') : $(v).attr('data-bulk-cart'));
+            const val = $(v).closest('tr').find('[data-bulk-qty]').val();
+            if(isNaN(val) || !val) return
+            total += Number(val) * price;
+        })
+        $('#bulk-total').html('&dollar;'+total)
+    }
+</script>
+{% endblock script %}    

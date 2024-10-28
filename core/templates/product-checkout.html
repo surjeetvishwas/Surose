@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+
+{% block content %}
+<!-- Breadcrumb Area -->
+<div class="tm-breadcrumb-area tm-padding-section bg-grey" data-bgimage="{% static 'assets/images/breadcrumb-bg.jpg' %}">
+    <div class="container">
+        <div class="tm-breadcrumb">
+            <h2>Checkout</h2>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Shop</a></li>
+                <li>Checkout</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!--// Breadcrumb Area -->
+
+<!-- Page Content -->
+<main class="page-content">
+
+    <!-- Checkout Area -->
+    <div class="tm-section tm-checkout-area bg-white tm-padding-section">
+        <div class="container">
+            <form class="tm-form tm-checkout-form" method="post">
+                {% csrf_token %}
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="alert alert-success mb-4">{{ message }}</div>
+                        {% else %}
+                            <div class="alert alert-danger mb-4">{{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h4 class="small-title">BILLING INFORMATION</h4>
+
+                        <!-- Billing Form -->
+                        <div class="tm-checkout-billingform">
+                            <div class="tm-form-inner">
+                                <div class="tm-form-field tm-form-fieldhalf">
+                                    <label for="billingform-firstname">First name*</label>
+                                    <input type="text" name="first_name" id="billingform-firstname">
+                                </div>
+                                <div class="tm-form-field tm-form-fieldhalf">
+                                    <label for="billingform-lastname">Last name*</label>
+                                    <input type="text" name="last_name" id="billingform-lastname">
+                                </div>
+                                <div class="tm-form-field">
+                                    <label for="billingform-email">Email address</label>
+                                    <input type="email" name="email" id="billingform-email">
+                                </div>
+                                <div class="tm-form-field">
+                                    <label for="billingform-phone">Phone (Optional)</label>
+                                    <input type="text" name="phone" id="billingform-phone">
+                                </div>
+                                <div class="tm-form-field">
+                                    <label for="billingform-country">Country</label>
+                                    <select name="country" id="billingform-country">
+                                        <option value="" disabled selected>Select country</option>
+                                        {% for country in countries %}   
+                                        <option value="{{ country.name }}">{{ country.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="tm-form-field">
+                                    <label for="billingform-address">Address</label>
+                                    <input type="text" id="billingform-address" name="address"
+                                        placeholder="Apartment, Street Address">
+                                </div>
+                                <div class="tm-form-field tm-form-fieldhalf">
+                                    <label for="billingform-streetaddress">State</label>
+                                    <input type="text" name="state" id="billingform-streetaddress">
+                                </div>
+                                <div class="tm-form-field tm-form-fieldhalf">
+                                    <label for="billingform-zipcode">Zip / Postcode</label>
+                                    <input type="text" name="postcode" id="billingform-zipcode">
+                                </div>
+                            </div>
+                        </div>
+                        <!--// Billing Form -->
+
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="tm-checkout-orderinfo">
+                            <div class="table-responsive">
+                                <table class="table table-borderless tm-checkout-ordertable">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for cart in carts %}
+                                        <tr>
+                                            <td>{{ cart.product.name }} * {{ cart.quantity }}</td>
+                                            <td>&dollar;{{ cart.total|floatformat:'2' }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="tm-checkout-subtotal">
+                                            <td>Cart Subtotal</td>
+                                            <td>&dollar;{{ subtotal|floatformat:'2' }}</td>
+                                        </tr>
+                                        <tr class="tm-checkout-shipping">
+                                            <td>(+) Shipping Charge</td>
+                                            <td>&dollar;{{ ship_charge|floatformat:'2' }}</td>
+                                        </tr>
+                                        <tr class="tm-checkout-total">
+                                            <td>Total</td>
+                                            <td>&dollar;{{ total|floatformat:'2' }}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="tm-checkout-submit">
+                                <p>Your personal data will be used to process your order, support your
+                                    experience throughout this website, and for other purposes described in our
+                                    privacy policy.</p>
+                                <div class="tm-form-inner">
+                                    <div class="tm-form-field">
+                                        <input type="checkbox" name="checkout-terms"
+                                            id="checkout-read-terms">
+                                        <label for="checkout-read-terms">I have read and agree to the website
+                                            terms and conditions</label>
+                                    </div>
+                                    <div class="tm-form-field">
+                                        <button type="submit" class="tm-button ml-auto">Place Order</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!--// Checkout Area -->
+
+</main>
+<!--// Page Content -->
+{% endblock content %}
