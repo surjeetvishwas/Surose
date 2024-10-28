@@ -25,4 +25,6 @@ COPY . .
 EXPOSE 8080
 
 # Default command
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8080"]
+ENTRYPOINT ["python", "manage.py"]
+CMD ["runserver", "0.0.0.0:8080"]
+
