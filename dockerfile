@@ -1,8 +1,9 @@
 # Use the official Python image
 FROM python:3.10
 
-# Set environment variables for non-interactive install
+# Set environment variables for non-interactive install and Google Cloud entrypoint
 ENV DEBIAN_FRONTEND=noninteractive
+ENV GOOGLE_ENTRYPOINT "python manage.py runserver 0.0.0.0:8080"
 
 # Install required system packages for mysqlclient
 RUN apt-get update && \
@@ -21,8 +22,8 @@ RUN pip install asgiref==3.7.2 certifi==2023.11.17 charset-normalizer==3.3.2 Dja
 # Copy the application code
 COPY . .
 
-# Expose port 8000 for Django
-EXPOSE 8000
+# Expose port 8080 for Google Cloud Run
+EXPOSE 8080
 
-# Set the entry point for Django
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Use the Google entrypoint environment variable
+CMD $GOOGLE_ENTRYPOINT
