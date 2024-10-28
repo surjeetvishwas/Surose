@@ -1,9 +1,8 @@
 # Use the official Python image
 FROM python:3.10
 
-# Set environment variables for non-interactive install and Google Cloud entrypoint
+# Set environment variables for non-interactive install
 ENV DEBIAN_FRONTEND=noninteractive
-ENV GOOGLE_ENTRYPOINT "python manage.py runserver 0.0.0.0:8080"
 
 # Install required system packages for mysqlclient
 RUN apt-get update && \
@@ -25,5 +24,5 @@ COPY . .
 # Expose port 8080 for Google Cloud Run
 EXPOSE 8080
 
-# Use the Google entrypoint environment variable
-CMD $GOOGLE_ENTRYPOINT
+# Default command
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8080"]
