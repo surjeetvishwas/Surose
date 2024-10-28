@@ -1,32 +1,28 @@
-# Use an official Python runtime as a parent image
-FROM python:3.12-slim
+# Use the official Python image
+FROM python:3.10
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app
 
-# Copy the requirements file into the container
-COPY requirements.txt /app/
+# Copy requirements.txt and .env file
+COPY requirements.txt ./
+COPY .env ./
+
+# Update pip and install build essentials
+RUN pip install --upgrade pip
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt --verbose
 
-# Copy the project files into the container
-COPY . /app
+# Copy the rest of your application code
+COPY . .
 
-# Copy the .env file into the container
-# (Optional: you might want to use environment variables directly in production instead)
-COPY .env /app/.env
-
-# Expose the port Django will use
+# Expose the port the app runs on
 EXPOSE 8000
 
-# Set environment variables for production
-ENV PYTHONUNBUFFERED=1
-ENV DJANGO_SETTINGS_MODULE=your_project_name.settings.production 
-
-# Run migrations and collect static files
-RUN python manage.py migrate
-RUN python manage.py collectstatic --noinput
-
-# Command to run the Django development server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Command to run the application
+CMD ["python", "app.py"]
