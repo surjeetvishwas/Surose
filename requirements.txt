@@ -8,6 +8,7 @@ idna==3.6
 
 Pillow==10.1.0
 psycopg2-binary
+
 python-dotenv==1.0.0
 pytz==2023.3.post1
 requests==2.32.3
@@ -16,5 +17,4 @@ stripe==8.8.0
 typing_extensions==4.9.0
 tzdata==2023.3
 urllib3==2.1.0
-whitenoise
-
+gunicorn==21.2.0
