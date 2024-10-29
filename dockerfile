@@ -4,7 +4,7 @@ FROM python:3.11
 # Set environment variables for non-interactive install
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install required system packages for psycopg2 and other dependencies
+# Install required system packages for PostgreSQL (psycopg2 dependency) and other dependencies
 RUN apt-get update && \
     apt-get install -y python3-dev libpq-dev build-essential && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -12,15 +12,12 @@ RUN apt-get update && \
 # Set the working directory
 WORKDIR /app
 
-# Copy the application code
+# Copy the application code and requirements file
 COPY . .
+COPY requirements.txt .
 
-# Install Python dependencies, including psycopg2 for PostgreSQL
-RUN pip install --no-cache-dir \
-    asgiref==3.7.2 certifi==2023.11.17 charset-normalizer==3.3.2 Django==5.0 \
-    django-cleanup==8.0.0 djangorestframework==3.14.0 idna==3.6 mysqlclient==2.2.5 \
-    Pillow==10.1.0 python-dotenv==1.0.0 pytz==2023.3.post1 requests==2.32.3 sqlparse==0.4.4 \
-    stripe==8.8.0 typing_extensions==4.9.0 tzdata==2023.3 urllib3==2.1.0 psycopg2==2.9.10
+# Install Python dependencies from requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose the application port
 EXPOSE 8000
