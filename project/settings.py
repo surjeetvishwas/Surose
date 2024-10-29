@@ -144,6 +144,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # WhiteNoise static file storage
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -174,3 +175,11 @@ SHIPPING_CHARGE = 15
 
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_PUBLISH_KEY = os.environ.get('STRIPE_PUBLISH_KEY')
+
+
+# CSRF and security settings
+CSRF_TRUSTED_ORIGINS = [
+    'https://surose-575245550695.us-central1.run.app'
+]
+
+CSRF_COOKIE_SECURE = True
