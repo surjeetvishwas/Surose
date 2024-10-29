@@ -8,6 +8,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y python3-dev libpq-dev build-essential && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
+    
+RUN sudo apt-get install python3-psycopg2
 
 # Set the working directory
 WORKDIR /app
