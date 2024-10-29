@@ -5,6 +5,8 @@ FROM python:3.11
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install essential packages for psycopg2 compatibility
+RUN apt-get update && apt-get install -y libpq-dev python3-dev
+
 RUN apt-get install libpq-dev python-dev
 
 # Set the working directory
@@ -16,6 +18,8 @@ COPY . .
 # Install Python dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Collect static files
+RUN python manage.py collectstatic --noinput
 
 # Expose port for the application
 EXPOSE 8080
