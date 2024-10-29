@@ -16,8 +16,6 @@ COPY . .
 # Install Python dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Collect static files
-RUN python manage.py collectstatic --noinput
 
 # Expose port for the application
 EXPOSE 8080
