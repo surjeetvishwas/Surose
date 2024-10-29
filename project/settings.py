@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-1jp00n$@^dt&eua0mhiz8cxznokcl5e=38s@78c@)wnr%$w#7m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '8000-cs-117413729784-default.cs-asia-southeast1-bool.cloudshell.dev']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'surose-575245550695.us-central1.run.app']
 
 
 
