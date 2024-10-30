@@ -90,12 +90,12 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'fiverr',
-        'USER': 'admin',
+        'USER': 'surjeet',
         'PASSWORD': 'admin', 
-        'HOST': '34.134.97.57',
-        'PORT': '5432',
+        'HOST': '35.193.91.103',
+        'PORT': '3306', 
         
     }
 }
@@ -179,7 +179,9 @@ STRIPE_PUBLISH_KEY = os.environ.get('STRIPE_PUBLISH_KEY')
 
 # CSRF and security settings
 CSRF_TRUSTED_ORIGINS = [
-    'https://surose-575245550695.us-central1.run.app'
+    'http://127.0.0.1',
+    'http://localhost',
+    'https://surose-575245550695.us-central1.run.app',
 ]
 
 CSRF_COOKIE_SECURE = True
