@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import pymysql  # Import PyMySQL
+
+# Install PyMySQL as MySQLdb
+pymysql.install_as_MySQLdb()
 
 load_dotenv()
 
