@@ -13,10 +13,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
-import pymysql  # Import PyMySQL
-
-# Install PyMySQL as MySQLdb
-pymysql.install_as_MySQLdb()
 
 load_dotenv()
 
@@ -94,12 +90,12 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'fiverr',
-        'USER': 'surjeet',
+        'USER': 'admin',
         'PASSWORD': 'admin', 
-        'HOST': '35.193.91.103',
-        'PORT': '3306', 
+        'HOST': '34.134.97.57',
+        'PORT': '5432',
         
     }
 }
