@@ -7,8 +7,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install essential packages for psycopg2 compatibility
 RUN apt-get update && apt-get install -y libpq-dev python3-dev
 
-
-
 # Set the working directory
 WORKDIR /app
 
@@ -18,7 +16,11 @@ COPY . .
 # Install Python dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Set Django settings for production
+ENV DJANGO_SETTINGS_MODULE=project.settings
+
 # Collect static files
+RUN mkdir -p /app/static && chmod 755 /app/static
 RUN python manage.py collectstatic --noinput
 
 # Expose port for the application
