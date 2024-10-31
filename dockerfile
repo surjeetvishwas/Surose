@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install essential packages for psycopg2 compatibility
 RUN apt-get update && apt-get install -y libpq-dev python3-dev
 
-RUN apt-get install libpq-dev python-dev
+
 
 # Set the working directory
 WORKDIR /app
